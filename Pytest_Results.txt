@@ -1,0 +1,71 @@
+G:\Projects\DockerDeck>pytest tests/ -v
+================================================= test session starts =================================================
+platform win32 -- Python 3.11.5, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\leonp\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+PySide6 6.9.1 -- Qt runtime 6.9.1 -- Qt compiled 6.9.1
+rootdir: G:\Projects\DockerDeck
+plugins: anyio-4.9.0, dash-3.1.1, cov-4.1.0, mock-3.14.1, qt-4.2.0, xdist-3.8.0
+collected 58 items
+
+tests/test_deploy.py::TestBuildRunCommand::test_basic_command_structure PASSED                                   [  1%]
+tests/test_deploy.py::TestBuildRunCommand::test_no_detach PASSED                                                 [  3%]
+tests/test_deploy.py::TestBuildRunCommand::test_name_arg PASSED                                                  [  5%]
+tests/test_deploy.py::TestBuildRunCommand::test_port_mapping PASSED                                              [  6%]
+tests/test_deploy.py::TestBuildRunCommand::test_env_var PASSED                                                   [  8%]
+tests/test_deploy.py::TestBuildRunCommand::test_volume_mount PASSED                                              [ 10%]
+tests/test_deploy.py::TestBuildRunCommand::test_network PASSED                                                   [ 12%]
+tests/test_deploy.py::TestBuildRunCommand::test_restart_policy PASSED                                            [ 13%]
+tests/test_deploy.py::TestBuildRunCommand::test_image_is_last PASSED                                             [ 15%]
+tests/test_deploy.py::TestBuildRunCommand::test_empty_optional_fields_omitted PASSED                             [ 17%]
+tests/test_deploy.py::TestBuildRunCommand::test_invalid_image_raises PASSED                                      [ 18%]
+tests/test_deploy.py::TestBuildRunCommand::test_extra_args_allowed PASSED                                        [ 20%]
+tests/test_deploy.py::TestBuildRunCommand::test_extra_args_blocked PASSED                                        [ 22%]
+tests/test_docker_runner.py::TestRunDocker::test_returns_tuple PASSED                                            [ 24%]
+tests/test_docker_runner.py::TestRunDocker::test_docker_not_found PASSED                                         [ 25%]
+tests/test_docker_runner.py::TestRunDocker::test_timeout PASSED                                                  [ 27%]
+tests/test_docker_runner.py::TestRunDockerStream::test_streams_lines PASSED                                      [ 29%]
+tests/test_docker_runner.py::TestRunDockerStream::test_stop_event_terminates PASSED                              [ 31%]
+tests/test_docker_runner.py::TestDockerAvailable::test_returns_true_on_rc_zero PASSED                            [ 32%]
+tests/test_docker_runner.py::TestDockerAvailable::test_returns_false_on_nonzero PASSED                           [ 34%]
+tests/test_docker_runner.py::TestDockerAvailable::test_returns_false_when_not_installed PASSED                   [ 36%]
+tests/test_validation.py::TestValidateImageName::test_valid_simple PASSED                                        [ 37%]
+tests/test_validation.py::TestValidateImageName::test_valid_with_tag PASSED                                      [ 39%]
+tests/test_validation.py::TestValidateImageName::test_valid_registry_path PASSED                                 [ 41%]
+tests/test_validation.py::TestValidateImageName::test_strips_whitespace PASSED                                   [ 43%]
+tests/test_validation.py::TestValidateImageName::test_empty_raises PASSED                                        [ 44%]
+tests/test_validation.py::TestValidateImageName::test_whitespace_only_raises PASSED                              [ 46%]
+tests/test_validation.py::TestValidateImageName::test_injection_semicolon PASSED                                 [ 48%]
+tests/test_validation.py::TestValidateImageName::test_injection_pipe PASSED                                      [ 50%]
+tests/test_validation.py::TestValidateImageName::test_injection_backtick PASSED                                  [ 51%]
+tests/test_validation.py::TestValidateImageName::test_injection_dollar PASSED                                    [ 53%]
+tests/test_validation.py::TestValidateImageName::test_invalid_format_spaces PASSED                               [ 55%]
+tests/test_validation.py::TestValidateContainerName::test_valid_simple PASSED                                    [ 56%]
+tests/test_validation.py::TestValidateContainerName::test_empty_returns_empty PASSED                             [ 58%]
+tests/test_validation.py::TestValidateContainerName::test_valid_alphanumeric PASSED                              [ 60%]
+tests/test_validation.py::TestValidateContainerName::test_invalid_starts_with_dash PASSED                        [ 62%]
+tests/test_validation.py::TestValidateContainerName::test_injection_raises PASSED                                [ 63%]
+tests/test_validation.py::TestValidatePorts::test_single_port PASSED                                             [ 65%]
+tests/test_validation.py::TestValidatePorts::test_multiple_ports_comma PASSED                                    [ 67%]
+tests/test_validation.py::TestValidatePorts::test_with_protocol PASSED                                           [ 68%]
+tests/test_validation.py::TestValidatePorts::test_empty_returns_empty_list PASSED                                [ 70%]
+tests/test_validation.py::TestValidatePorts::test_bad_format_raises PASSED                                       [ 72%]
+tests/test_validation.py::TestValidatePorts::test_injection_in_port PASSED                                       [ 74%]
+tests/test_validation.py::TestValidateEnvVars::test_single_env PASSED                                            [ 75%]
+tests/test_validation.py::TestValidateEnvVars::test_multiple_envs PASSED                                         [ 77%]
+tests/test_validation.py::TestValidateEnvVars::test_empty_returns_empty_list PASSED                              [ 79%]
+tests/test_validation.py::TestValidateEnvVars::test_bad_format_no_equals PASSED                                  [ 81%]
+tests/test_validation.py::TestValidateEnvVars::test_bad_key_starts_with_digit PASSED                             [ 82%]
+tests/test_validation.py::TestValidateEnvVars::test_injection_in_value PASSED                                    [ 84%]
+tests/test_validation.py::TestValidateVolumes::test_simple_volume PASSED                                         [ 86%]
+tests/test_validation.py::TestValidateVolumes::test_with_mode PASSED                                             [ 87%]
+tests/test_validation.py::TestValidateVolumes::test_empty_returns_empty_list PASSED                              [ 89%]
+tests/test_validation.py::TestValidateVolumes::test_bad_format_no_colon PASSED                                   [ 91%]
+tests/test_validation.py::TestValidateExtraArgs::test_valid_memory PASSED                                        [ 93%]
+tests/test_validation.py::TestValidateExtraArgs::test_valid_rm_flag PASSED                                       [ 94%]
+tests/test_validation.py::TestValidateExtraArgs::test_empty_returns_empty_list PASSED                            [ 96%]
+tests/test_validation.py::TestValidateExtraArgs::test_unknown_flag_raises PASSED                                 [ 98%]
+tests/test_validation.py::TestValidateExtraArgs::test_injection_in_arg PASSED                                    [100%]
+
+================================================= 58 passed in 0.37s ==================================================
+
+G:\Projects\DockerDeck>

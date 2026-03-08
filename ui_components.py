@@ -153,6 +153,64 @@ def make_icon_button(parent, text: str, command, color: str,
     )
 
 
+def bind_focus_ring(widget, ring_color: str = None) -> None:
+    """
+    Accessibility: give any tkinter widget a visible keyboard focus indicator.
+    Uses highlightthickness + highlightcolor so it shows on :focus without
+    changing the widget's normal appearance.
+    Meets WCAG 2.1 SC 2.4.7 (Focus Visible) at AA level.
+    """
+    from utils import COLORS
+    ring = ring_color or COLORS["focus_ring"]
+    try:
+        widget.configure(
+            highlightthickness=2,
+            highlightcolor=ring,
+            highlightbackground=COLORS["border"],
+        )
+
+        def _on_focus_in(_evt):
+            try:
+                widget.configure(highlightbackground=ring)
+            except Exception:
+                pass
+
+        def _on_focus_out(_evt):
+            try:
+                widget.configure(highlightbackground=COLORS["border"])
+            except Exception:
+                pass
+
+        widget.bind("<FocusIn>",  _on_focus_in,  add=True)
+        widget.bind("<FocusOut>", _on_focus_out, add=True)
+    except Exception:
+        pass   # silently ignore widgets that don't support these options
+
+
+def make_accessible_button(parent, text: str, command,
+                            fg: str, font=None,
+                            bg: str = None, padx: int = 10,
+                            pady: int = 5) -> "tk.Button":
+    """
+    Button with visible focus ring for keyboard navigation (WCAG 2.4.7).
+    Identical appearance to a standard flat button when not focused.
+    """
+    from utils import COLORS, FONTS
+    btn = tk.Button(
+        parent, text=text,
+        font=font or FONTS["ui_sm"],
+        bg=bg or COLORS["bg_hover"], fg=fg,
+        relief="flat", bd=0,
+        padx=padx, pady=pady,
+        cursor="hand2",
+        activebackground=COLORS["border"],
+        activeforeground=fg,
+        command=command,
+    )
+    bind_focus_ring(btn)
+    return btn
+
+
 def ask_input(root, title: str, prompt: str, default: str = "") -> str:
     """
     Show a modal single-line input dialog.
@@ -176,11 +234,13 @@ def ask_input(root, title: str, prompt: str, default: str = "") -> str:
         insertbackground=COLORS["accent"],
         relief="flat", bd=4,
         highlightbackground=COLORS["border"],
-        highlightthickness=1
+        highlightthickness=2
     )
+    bind_focus_ring(e)
     e.insert(0, default)
     e.select_range(0, "end")
     e.pack(padx=20, fill="x")
+    e.focus_set()
 
     def ok():
         result["value"] = e.get().strip()

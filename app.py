@@ -71,6 +71,8 @@ class DockerDeck(tk.Tk):
         self.log_stop_event     = threading.Event()
         self._stats_stop_event  = threading.Event()
         self._events_stop       = threading.Event()
+        self._daemon_stop       = threading.Event()
+        self._daemon_ok         = True
 
         self.presets = load_presets()
 
@@ -78,6 +80,7 @@ class DockerDeck(tk.Tk):
         self._check_docker()
         self._check_for_updates()
         self._start_events_watcher()
+        self._start_daemon_monitor()
         self._setup_shortcuts()
         self._refresh_all()
 
@@ -331,7 +334,9 @@ class DockerDeck(tk.Tk):
             ("📋 Inspect",   self._c_inspect,    COLORS["accent"]),
             ("🖥 Shell Cmd", self._c_shell,      COLORS["accent_purple"]),
             ("⛔ Stop All",  self._c_stop_all,   COLORS["accent_red"]),
-            ("🗑 Remove",    self._c_remove,     COLORS["accent_red"]),
+            ("🔄 Bulk Restart", self._c_bulk_restart,  COLORS["accent_orange"]),
+            ("🗑 Bulk Remove",  self._c_bulk_remove,   COLORS["accent_red"]),
+            ("🗑 Remove",       self._c_remove,        COLORS["accent_red"]),
         ]:
             tk.Button(tb, text=txt, font=FONTS["ui_sm"],
                       bg=COLORS["bg_hover"], fg=color,
@@ -466,6 +471,34 @@ class DockerDeck(tk.Tk):
                   bg=COLORS["accent"], fg="white",
                   relief="flat", bd=0, padx=16, pady=6,
                   command=do_cp).pack(pady=10)
+
+    def _c_bulk_restart(self):
+        """Bulk restart all selected containers."""
+        names = self._c_names()
+        if not names:
+            messagebox.showinfo("Select Containers", "Select one or more containers first.")
+            return
+        if messagebox.askyesno(
+            "Bulk Restart",
+            "Restart " + str(len(names)) + " container(s)?\n" + ", ".join(names)
+        ):
+            container_restart(self, names, self._c_output)
+            self._show_success_notification(
+                "Restart issued for " + str(len(names)) + " container(s).")
+
+    def _c_bulk_remove(self):
+        """Bulk force-remove all selected containers."""
+        names = self._c_names()
+        if not names:
+            messagebox.showinfo("Select Containers", "Select one or more containers first.")
+            return
+        if messagebox.askyesno(
+            "Bulk Remove",
+            "Force-remove " + str(len(names)) + " container(s)?\n" + ", ".join(names)
+        ):
+            container_remove(self, names, self._c_output)
+            self._show_success_notification(
+                "Removed " + str(len(names)) + " container(s).")
 
     def _c_shell(self):
         n = self._c_one()
@@ -1514,6 +1547,44 @@ class DockerDeck(tk.Tk):
 
         safe_thread(_watch)
 
+    # ─────────────────────────── DAEMON HEALTH MONITOR ──
+
+    def _start_daemon_monitor(self):
+        """P2 #7: Background thread polls docker info every 12s."""
+        INTERVAL = 12
+        self._daemon_stop.clear()
+
+        def _monitor():
+            while not self._daemon_stop.is_set():
+                ok = docker_available()
+                if ok and not self._daemon_ok:
+                    self._daemon_ok = True
+                    self.after(0, self._on_daemon_recovered)
+                elif not ok and self._daemon_ok:
+                    self._daemon_ok = False
+                    self.after(0, self._on_daemon_lost)
+                self._daemon_stop.wait(INTERVAL)
+
+        safe_thread(_monitor)
+
+    def _on_daemon_lost(self):
+        self.docker_status_label.configure(
+            text="● Docker unavailable", fg=COLORS["accent_red"])
+        self._show_error_notification(
+            "Docker daemon not responding. "
+            "Check Docker is running, then press Ctrl+R.",
+            icon="⚠", color=COLORS["accent_red"])
+        self._set_status("⚠  Docker daemon unavailable")
+
+    def _on_daemon_recovered(self):
+        self.docker_status_label.configure(
+            text="● Docker running", fg=COLORS["accent_green"])
+        self._hide_notification()
+        self._set_status("Docker daemon reconnected — refreshing…")
+        self._refresh_all()
+        self._events_stop.clear()
+        self._start_events_watcher()
+
     def _check_for_updates(self):
         """P2 #8 — GitHub API version check; shows toast if newer version found."""
         REPO = "anthropics/dockerdeck"  # replace with actual repo when published
@@ -1539,6 +1610,7 @@ class DockerDeck(tk.Tk):
 
     def on_close(self):
         self._events_stop.set()
+        self._daemon_stop.set()
         self.log_stop_event.set()
         self._stats_stop_event.set()
         self.destroy()

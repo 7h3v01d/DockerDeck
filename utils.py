@@ -39,8 +39,12 @@ COLORS = {
     "running":       "#3fb950",
     "stopped":       "#f85149",
     "paused":        "#d29922",
-    # High-contrast overrides for disabled/secondary text (WCAG AA)
-    "text_disabled": "#6e7681",
+    # WCAG AA contrast overrides (ratio vs #0d1117 bg_dark)
+    # text_dim    #484f58  2.28 — decorative only (dots, separators, never real text)
+    # text_disabled was #6e7681 (4.12:1, FAIL AA) — bumped to 4.94:1 PASS AA
+    "text_disabled": "#7a8390",
+    # Focus ring colour — used on keyboard focus for all interactive elements
+    "focus_ring":    "#58a6ff",   # same as accent, 7.49:1 — PASS AAA
 }
 
 FONTS = {

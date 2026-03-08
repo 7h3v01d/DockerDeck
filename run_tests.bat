@@ -1,4 +1,4 @@
-python pytest tests/ -v
+python -m pytest tests/ -v
 pause
 
 pause

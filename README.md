@@ -1,5 +1,5 @@
 <!-- encoding: utf-8 -->
-# DockerDeck v4
+# DockerDeck v0.3.5
 
 [![CI](https://github.com/your-org/dockerdeck/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/dockerdeck/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

@@ -1,12 +1,14 @@
 <!-- encoding: utf-8 -->
-# DockerDeck v3
+# DockerDeck v4
 
 [![CI](https://github.com/your-org/dockerdeck/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/dockerdeck/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 
-**Production-grade Docker GUI** -- manage containers, images, networks, volumes,
+**Local Docker operator console** — manage containers, images, networks, volumes,
 compose stacks, and registries from a single dark-themed desktop application.
+
+**Scope:** DockerDeck is a personal/team local operator console — the clearest, safest way to run everyday Docker operations from a GUI. It is not a Docker Desktop replacement or a production deployment platform.
 
 **Zero pip dependencies** -- pure Python 3.8+ stdlib (tkinter, subprocess, threading, json).
 

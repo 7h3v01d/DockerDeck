@@ -25,10 +25,7 @@ from pathlib import Path
 block_cipher = None
 ROOT = Path(SPECPATH)
 
-# Collect all application modules
-app_sources = [
-    str(ROOT / "main.py"),
-]
+app_sources = [str(ROOT / "main.py")]
 
 hidden_imports = [
     "tkinter",
@@ -36,7 +33,6 @@ hidden_imports = [
     "tkinter.scrolledtext",
     "tkinter.messagebox",
     "tkinter.filedialog",
-    # stdlib used at runtime
     "subprocess",
     "threading",
     "json",
@@ -50,6 +46,9 @@ hidden_imports = [
     "urllib.request",
     "urllib.error",
     "gc",
+    "logging",
+    "dataclasses",
+    "enum",
 ]
 
 a = Analysis(
@@ -57,8 +56,11 @@ a = Analysis(
     pathex=[str(ROOT)],
     binaries=[],
     datas=[
-        # Include subpackage
-        (str(ROOT / "actions"), "actions"),
+        (str(ROOT / "actions"),     "actions"),
+        (str(ROOT / "services"),    "services"),
+        (str(ROOT / "controllers"), "controllers"),
+        # Bundle the icon so it's accessible at runtime (for window icon)
+        (str(ROOT / "dockerdeck.ico"), "."),
     ],
     hiddenimports=hidden_imports,
     hookspath=[],
@@ -87,24 +89,24 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,          # no terminal window on Windows/macOS
+    console=False,           # no terminal window on Windows/macOS
     disable_windowed_traceback=False,
-    argv_emulation=True,    # macOS: handle Apple Events
-    target_arch=None,       # None = current arch; set 'x86_64' or 'arm64' to cross-compile
+    argv_emulation=True,     # macOS: handle Apple Events
+    target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    # Windows icon (uncomment and provide .ico file):
-    # icon="assets/icon.ico",
+    icon=str(ROOT / "dockerdeck.ico"),   # ← logo icon for Windows EXE + taskbar
 )
 
-# macOS .app bundle (optional — uncomment to produce DockerDeck.app)
+# macOS .app bundle — uncomment to produce DockerDeck.app
 # app = BUNDLE(
 #     exe,
 #     name="DockerDeck.app",
-#     icon="assets/icon.icns",
+#     icon=str(ROOT / "dockerdeck.ico"),  # convert to .icns first with sips or iconutil
 #     bundle_identifier="com.dockerdeck.app",
 #     info_plist={
 #         "NSHighResolutionCapable": True,
-#         "CFBundleShortVersionString": "3.0.0",
+#         "CFBundleShortVersionString": "4.0.0",
+#         "NSHumanReadableCopyright": "MIT License",
 #     },
 # )

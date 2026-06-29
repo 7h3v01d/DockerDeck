@@ -63,6 +63,17 @@ class DockerDeck(tk.Tk):
         self.geometry("1280x840")
         self.minsize(960, 640)
         self.configure(bg=COLORS["bg_dark"])
+        # App icon (works on Windows; gracefully ignored elsewhere)
+        try:
+            import os, sys
+            _icon_path = os.path.join(os.path.dirname(os.path.abspath(
+                getattr(sys, "_MEIPASS", __file__))), "dockerdeck.ico")
+            if not os.path.exists(_icon_path):
+                _icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dockerdeck.ico")
+            if os.path.exists(_icon_path):
+                self.iconbitmap(_icon_path)
+        except Exception:
+            pass
 
         set_error_callback(self._show_error_notification)
 

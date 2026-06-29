@@ -256,4 +256,4 @@ Use Save / Load / Delete buttons in the Deploy tab.
 
 ## License
 
-MIT -- see [LICENSE](LICENSE).
+Apache 2.0 - Leon Priest -- see [LICENSE](LICENSE).
